@@ -51,6 +51,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0 40px;
 }
 
 .logo a {
@@ -154,7 +155,7 @@ header {
 
 /* Hero Section */
 .hero {
-    padding: 120px 0 60px;
+    padding: 140px 0 80px;
     background: #f8fafc;
     color: #333;
     text-align: center;
@@ -162,13 +163,13 @@ header {
 
 .hero h1 {
     font-size: 48px;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     color: #1e293b;
 }
 
 .hero h2 {
     font-size: 24px;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
     font-weight: normal;
     color: #475569;
 }
@@ -176,26 +177,29 @@ header {
 .hero p {
     font-size: 18px;
     max-width: 800px;
-    margin: 0 auto 40px;
+    margin: 0 auto 50px;
     color: #64748b;
+    line-height: 1.8;
 }
 
 /* Features Section */
 .features {
-    padding: 80px 0;
+    padding: 100px 0;
     background-color: #fff;
 }
 
 .features h2 {
     text-align: center;
-    margin-bottom: 50px;
+    margin-bottom: 60px;
     color: #1e293b;
+    font-size: 32px;
 }
 
 .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
+    margin: 0 20px;
 }
 
 .feature-card {
@@ -223,27 +227,29 @@ header {
 
 /* FAQ Section */
 .faq {
-    padding: 80px 0;
+    padding: 100px 0;
     background-color: #f8fafc;
 }
 
 .faq h2 {
     text-align: center;
-    margin-bottom: 50px;
+    margin-bottom: 60px;
     color: #1e293b;
+    font-size: 32px;
 }
 
 .faq-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 40px;
+    margin: 0 20px;
 }
 
 .faq-item {
     background: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .faq-item h3 {
@@ -255,18 +261,18 @@ header {
 footer {
     background-color: #1e293b;
     color: #fff;
-    padding: 60px 0 20px;
+    padding: 80px 0 30px;
 }
 
 .footer-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 40px;
-    margin-bottom: 40px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 60px;
+    margin: 0 20px 60px;
 }
 
 .footer-section h3 {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     font-size: 20px;
 }
 
@@ -275,7 +281,7 @@ footer {
 }
 
 .footer-section ul li {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .footer-section a {
@@ -290,14 +296,25 @@ footer {
 
 .footer-bottom {
     text-align: center;
-    padding-top: 20px;
+    padding-top: 30px;
     border-top: 1px solid rgba(255,255,255,0.1);
+    margin: 0 20px;
 }
 
 /* Responsive Design */
+@media (max-width: 1200px) {
+    .pricing-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
-    .nav-links {
-        display: none;
+    .container {
+        padding: 0 20px;
+    }
+    
+    .pricing-grid {
+        grid-template-columns: 1fr;
     }
     
     .hero h1 {
@@ -311,33 +328,58 @@ footer {
     .features-grid,
     .faq-grid {
         grid-template-columns: 1fr;
+        margin: 0;
+    }
+    
+    .pricing-card,
+    .faq-item {
+        padding: 30px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .hero {
+        padding: 120px 0 60px;
+    }
+    
+    .hero h1 {
+        font-size: 28px;
+    }
+    
+    .hero p {
+        font-size: 16px;
     }
 }
 
 /* Pricing Section */
 .pricing {
-    padding: 80px 0;
+    padding: 100px 0;
     background-color: #fff;
 }
 
 .pricing h2 {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 60px;
     color: #1e293b;
+    font-size: 32px;
 }
 
 .pricing-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    margin-bottom: 30px;
+    gap: 30px;
+    margin: 0 20px 40px;
 }
 
 .pricing-card {
     background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 40px 30px;
     transition: transform 0.3s;
     display: flex;
     flex-direction: column;
@@ -469,7 +511,8 @@ footer {
     text-align: center;
     color: #64748b;
     font-size: 14px;
-    margin-top: 20px;
+    margin-top: 30px;
+    padding: 0 20px;
 }
 
 @media (max-width: 1200px) {

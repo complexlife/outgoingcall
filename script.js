@@ -165,18 +165,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const pricingData = {
         'call-based': {
             packages: {
-                starter: { min: 50, max: 100, price: 7500 },
-                growth: { min: 100, max: 1000, price: 7000 },
-                professional: { min: 1000, max: 10000, price: 6500 },
-                enterprise: { min: 10000, max: null, price: 6000 }
+                starter: { price: 750000 },
+                growth: { price: 6900000 },
+                professional: { price: 63000000 },
+                enterprise: { price: 0 }
             }
         },
         'minute-based': {
             packages: {
-                starter: { min: 0, max: 300, price: 2500 },
-                growth: { min: 0, max: 3000, price: 2300 },
-                professional: { min: 0, max: 30000, price: 2100 },
-                enterprise: { min: 0, max: null, price: 2000 }
+                starter: { price: 750000 },
+                growth: { price: 6900000 },
+                professional: { price: 63000000 },
+                enterprise: { price: 0 }
             }
         }
     };
@@ -193,13 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (packageType === 'enterprise') {
                 priceElement.textContent = 'مشاوره';
             } else {
-                let totalPrice;
-                if (type === 'call-based') {
-                    totalPrice = packageData.min * packageData.price;
-                } else {
-                    totalPrice = packageData.max * packageData.price;
-                }
-                priceElement.textContent = totalPrice.toLocaleString();
+                priceElement.textContent = packageData.price.toLocaleString();
             }
         });
     }

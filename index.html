@@ -6,6 +6,23 @@
     <title>سرویس تماس خروجی - دفترشما</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+  (function(d,t) {
+    var BASE_URL="https://app.gapify.ai";
+    var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=BASE_URL+"/packs/js/sdk.js";
+    g.defer = true;
+    g.async = true;
+    s.parentNode.insertBefore(g,s);
+    g.onload=function(){
+      window.gapifySDK.run({
+        websiteToken: 'QRwziR9m8f1QbLvXUKX6kDTF',
+        baseUrl: BASE_URL
+      })
+    }
+  })(document,"script");
+</script>
+
 </head>
 <body>
     <header>

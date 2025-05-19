@@ -214,4 +214,246 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize with call-based pricing
     updatePricing('call-based');
+});
+
+// Calculator functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const totalCallsInput = document.getElementById('total-calls');
+    const callDurationInput = document.getElementById('call-duration');
+    const dailyLimitInput = document.getElementById('daily-limit');
+    const callRepetitionInput = document.getElementById('call-repetition');
+    const specificPersonCheckbox = document.getElementById('specific-person');
+    const operatorTrainingCheckbox = document.getElementById('operator-training');
+    const maxCallAttemptsInput = document.getElementById('max-call-attempts');
+    const callTypeRadios = document.querySelectorAll('input[name="call-type"]');
+    const pricingCallTypeRadios = document.querySelectorAll('input[name="pricing-call-type"]');
+    const paymentBtn = document.getElementById('payment-btn');
+    const totalMinutesElement = document.getElementById('total-minutes');
+    const totalPriceElement = document.getElementById('total-price');
+    const repetitionPriceElement = document.getElementById('repetition-price');
+    const callAttemptsPriceElement = document.getElementById('call-attempts-price');
+
+    // Constants for price calculations
+    const DURATION_THRESHOLD = 3;
+    const DEFAULT_DAILY_LIMIT = 50;
+    const DAILY_LIMIT_PRICE_MULTIPLIER = 0.1;
+    const REPETITION_PRICE_MULTIPLIER = 0.05; // 5% increase per repetition
+    const SPECIFIC_PERSON_PRICE = 500000;
+    const OPERATOR_TRAINING_PRICE = 1000000;
+    const CALL_ATTEMPTS_PRICE_MULTIPLIER = 0.02; // 2% increase per attempt
+
+    // Pricing configuration
+    const PRICING = {
+        'happy-call': {
+            pricePerCallUnder3Min: 8900,
+            pricePerMinuteOver3Min: 4300
+        },
+        'sales': {
+            pricePerCallUnder3Min: 12000,
+            pricePerMinuteOver3Min: 5500
+        },
+        'info': {
+            pricePerCallUnder3Min: 9500,
+            pricePerMinuteOver3Min: 4800
+        },
+        'other': {
+            pricePerCallUnder3Min: 10000,
+            pricePerMinuteOver3Min: 5000
+        }
+    };
+
+    // Slider configurations
+    const sliderConfigs = {
+        'total-calls': {
+            min: 10,
+            max: 1000,
+            step: 10,
+            defaultValue: 100,
+            format: value => `${value.toLocaleString()} تماس`
+        },
+        'call-duration': {
+            min: 1,
+            max: 10,
+            step: 0.5,
+            defaultValue: 3,
+            format: value => `${value} دقیقه`
+        },
+        'daily-limit': {
+            min: 10,
+            max: 200,
+            step: 5,
+            defaultValue: 50,
+            format: value => `${value} تماس`
+        },
+        'call-repetition': {
+            min: 1,
+            max: 12,
+            step: 1,
+            defaultValue: 1,
+            format: value => `${value} بار`
+        },
+        'max-call-attempts': {
+            min: 2,
+            max: 10,
+            step: 1,
+            defaultValue: 2,
+            format: value => `${value} بار`
+        }
+    };
+
+    // Initialize sliders with configurations
+    Object.entries(sliderConfigs).forEach(([id, config]) => {
+        const slider = document.getElementById(id);
+        if (slider) {
+            slider.min = config.min;
+            slider.max = config.max;
+            slider.step = config.step;
+            slider.value = config.defaultValue;
+            updateSliderValue(slider);
+        }
+    });
+
+    function updateSliderValue(slider) {
+        const labelValue = slider.closest('.form-group').querySelector('.label-value');
+        const config = sliderConfigs[slider.id];
+        if (config) {
+            labelValue.textContent = config.format(parseFloat(slider.value));
+        }
+    }
+
+    function calculateDailyLimitPrice() {
+        const dailyLimit = parseInt(dailyLimitInput.value) || DEFAULT_DAILY_LIMIT;
+        const totalCalls = parseInt(totalCallsInput.value) || 0;
+        const callType = getSelectedCallType(callTypeRadios);
+        const pricing = PRICING[callType];
+        
+        let extraPrice = 0;
+        if (dailyLimit < DEFAULT_DAILY_LIMIT) {
+            const callsPerDay = Math.ceil(totalCalls / 30); // Assuming 30 days
+            if (callsPerDay > dailyLimit) {
+                const extraCalls = callsPerDay - dailyLimit;
+                extraPrice = Math.round(pricing.pricePerCallUnder3Min * DAILY_LIMIT_PRICE_MULTIPLIER * extraCalls);
+            }
+        }
+        
+        const dailyLimitPriceElement = document.getElementById('daily-limit-price');
+        if (dailyLimitPriceElement) {
+            dailyLimitPriceElement.textContent = extraPrice.toLocaleString();
+        }
+        return extraPrice;
+    }
+
+    function calculateRepetitionPrice() {
+        const repetitions = parseInt(callRepetitionInput.value) || 1;
+        const extraRepetitions = repetitions - 1;
+        const priceIncrease = extraRepetitions * REPETITION_PRICE_MULTIPLIER * 100;
+        repetitionPriceElement.textContent = priceIncrease.toFixed(0);
+        return priceIncrease / 100;
+    }
+
+    function calculateCallAttemptsPrice() {
+        const attempts = parseInt(maxCallAttemptsInput.value) || 2;
+        const extraAttempts = attempts - 2;
+        const priceIncrease = extraAttempts * CALL_ATTEMPTS_PRICE_MULTIPLIER * 100;
+        callAttemptsPriceElement.textContent = priceIncrease.toFixed(0);
+        return priceIncrease / 100;
+    }
+
+    function calculateTotalPrice() {
+        const totalCalls = parseInt(totalCallsInput.value) || 0;
+        const callDuration = parseFloat(callDurationInput.value) || 0;
+        const callType = getSelectedCallType(callTypeRadios);
+        const pricing = PRICING[callType];
+
+        // Calculate total minutes
+        const totalMinutes = totalCalls * callDuration;
+        totalMinutesElement.textContent = totalMinutes.toLocaleString();
+
+        // Calculate base price
+        let totalPrice = 0;
+        if (callDuration <= DURATION_THRESHOLD) {
+            totalPrice = totalCalls * pricing.pricePerCallUnder3Min;
+        } else {
+            totalPrice = totalMinutes * pricing.pricePerMinuteOver3Min;
+        }
+
+        // Add daily limit extra price
+        totalPrice += calculateDailyLimitPrice();
+
+        // Add repetition price
+        const repetitionMultiplier = 1 + calculateRepetitionPrice();
+        totalPrice *= repetitionMultiplier;
+
+        // Add specific person price if selected
+        if (specificPersonCheckbox.checked) {
+            totalPrice += SPECIFIC_PERSON_PRICE;
+        }
+
+        // Add operator training price if selected
+        if (operatorTrainingCheckbox.checked) {
+            totalPrice += OPERATOR_TRAINING_PRICE;
+        }
+
+        // Add call attempts price
+        const attemptsMultiplier = 1 + calculateCallAttemptsPrice();
+        totalPrice *= attemptsMultiplier;
+
+        // Update price display
+        totalPriceElement.textContent = Math.round(totalPrice).toLocaleString();
+        
+        return totalPrice;
+    }
+
+    function getSelectedCallType(radios) {
+        return Array.from(radios).find(radio => radio.checked)?.value;
+    }
+
+    // Add event listeners for sliders
+    [totalCallsInput, callDurationInput, dailyLimitInput, callRepetitionInput, maxCallAttemptsInput].forEach(slider => {
+        slider.addEventListener('input', function() {
+            updateSliderValue(this);
+            calculateTotalPrice();
+        });
+    });
+
+    // Add event listeners for call type changes
+    callTypeRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            const customForm = document.getElementById('custom-form');
+            const paymentSection = document.getElementById('payment-section');
+            const consultationSection = document.getElementById('consultation-section');
+            
+            if (this.value === 'other') {
+                customForm.style.display = 'block';
+                paymentSection.style.display = 'none';
+                consultationSection.style.display = 'block';
+            } else {
+                customForm.style.display = 'none';
+                paymentSection.style.display = 'block';
+                consultationSection.style.display = 'none';
+            }
+            calculateTotalPrice();
+        });
+    });
+
+    // Add event listeners for pricing call type changes
+    pricingCallTypeRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            calculateTotalPrice();
+        });
+    });
+
+    // Add event listeners for new inputs
+    [specificPersonCheckbox, operatorTrainingCheckbox].forEach(checkbox => {
+        checkbox.addEventListener('change', calculateTotalPrice);
+    });
+
+    // Add event listener for payment button
+    paymentBtn.addEventListener('click', handlePayment);
+
+    // Initial calculations and value updates
+    [totalCallsInput, callDurationInput, dailyLimitInput, callRepetitionInput, maxCallAttemptsInput].forEach(slider => {
+        updateSliderValue(slider);
+    });
+    calculateTotalPrice();
 }); 
